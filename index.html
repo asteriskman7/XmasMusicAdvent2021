@@ -1,0 +1,332 @@
+<html>
+  <!--
+TODO:
+  fix test dates to be 12/1/2021
+  fix default to be all closed, instead of all open
+  figure out what to do for the 25th through 31st
+  -->
+  <head>
+    <title>Xmas Music Advent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 112 112%22><text y=%22.9em%22 font-size=%2290%22>&#x1f384;</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      :root {
+        --bg: black;
+        --fg: white;
+        --fgd: hsl(0, 0%, 30%);
+        --hl: hsl(0, 100%, 30%);
+        --hld: hsl(0, 100%, 43%);
+        --hlda: hsl(120, 78%, 35%);
+        --hl2: hsl(46, 100%, 63%);
+        --font: 'Berkshire Swash', sans-serif;
+      }
+      body {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 1em;
+        justify-items: center;
+        background: var(--bg);
+        color: var(--fg);
+        text-align: center;
+        font-family: var(--font);
+        font-size: large;
+        letter-spacing: 0.05em;
+        background-image: url('./bg1.png');
+        background-size: cover;
+      }
+      canvas {
+        background: white;
+      }
+      a {
+        color: var(--hl);
+      }
+      a:visited {
+        color: var(--hl);
+      }
+      #calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        width: 840px;
+      }
+      #month {
+        grid-column: 1 / 8;
+        font-size: 2em;
+        text-shadow: 2px 2px 5px var(--hld);
+      }
+      .dayDay {
+        padding: 0.5em;
+        text-shadow: 2px 2px 5px var(--hld);
+      }
+      .adventDay {
+        font-size: 2em;
+        text-align: center;
+        border: 1px solid var(--hl);
+        border-radius: 10px;
+        padding: 0.5em;
+        background: var(--hld);
+        cursor: pointer;
+        text-shadow: 4px 4px 4px black;
+        box-sizing: border-box;
+        box-shadow: 2px 2px 5px var(--hld);
+        width: 120px;
+        height: 80px;
+        transition: border-width 0.15s, text-shadow 0.15s, padding-left 0.15s, padding-top 0.15s;
+      }
+      .adventDay:nth-child(even) {background: var(--hld);}
+      .adventDay:nth-child(odd) {background: var(--hlda);}
+      .adventDay:hover {
+        text-shadow: 2px 2px 2px black;
+      }
+      .adventDaySelected {
+        border: 4px solid var(--hl2);
+        padding-left: 0.67em;
+        padding-top: 0.50em;
+        text-shadow: 2px 2px 2px black;
+        box-shadow: 1px 1px 1px var(--hld);
+      }
+      .dayFuture {
+        filter: brightness(0.3);
+        cursor: not-allowed;
+      }
+      #videoTitle {
+        font-size: xx-large;
+        text-shadow: 2px 2px 5px var(--hld);
+      }
+      #videoDesc {
+        margin: 0.5em;
+      }
+      #videoFrame {
+        box-shadow: 2px 2px 5px var(--hld);
+      }
+      #wrapper {
+        margin-top: 1em;
+        background: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div id='header'>
+      <div id='calendar'>
+      </div>
+    </div>
+    <div id='content'>
+      <div id='videoTitle'>Please select a date above</div> 
+      <div id='wrapper'>
+        <iframe id='videoFrame' class='videoFrame' width="560" height="315" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <script>
+     
+      class App {
+        constructor() {
+
+          this.adventData = [];
+          this.adventData.push({}); //0th spot is empty
+          this.adventData.push({title: "It's Beginning to Look a Lot Like Christmas", img: "ibtlallc", videoID: ""});
+          this.adventData.push({title: "Rudolph the Red Nosed Reindeer", img: "rudolph", videoID: "VjL031bE9FA"});
+          this.adventData.push({title: "O' Little Town of Bethlehem", img: "bethlehem", videoID: ""});
+          this.adventData.push({title: "Christmas Time is Here", img: "christmasTimeIsHere", videoID: ""});
+          this.adventData.push({title: "Holly Jolly Christmas", img: "holly", videoID: ""});
+          this.adventData.push({title: "Silent Night", img: "silent", videoID: ""});
+          this.adventData.push({title: "I'll Be Home for Christmas", img: "homeForChristmas", videoID: ""});
+          this.adventData.push({title: "The First Noel", img: "noel", videoID: ""});
+          this.adventData.push({title: "Home for the Holidays", img: "hfth", videoID: ""});
+          this.adventData.push({title: "Winter Wonderland", img: "wonderland", videoID: ""});
+          this.adventData.push({title: "Santa Claus is Coming to Town", img: "scictt", videoID: ""});
+          this.adventData.push({title: "The Twelve Days of Christmas", img: "twelve", videoID: ""});
+          this.adventData.push({title: "It's the Most Wonderful Time of the Year", img: "wonderful", videoID: ""});
+          this.adventData.push({title: "Jingle Bells", img: "jingle", videoID: ""});
+          this.adventData.push({title: "Let It Snow! Let It Snow! Let It Snow!", img: "letItSnow", videoID: ""});
+          this.adventData.push({title: "White Christmas", img: "whiteXmas", videoID: ""});
+          this.adventData.push({title: "Deck the Halls", img: "deckTheHalls", videoID: ""});
+          this.adventData.push({title: "O' Holy Night", img: "holyNight", videoID: ""});
+          this.adventData.push({title: "Frosty the Snowman", img: "frosty", videoID: "vjscH2WBWjw"});
+          this.adventData.push({title: "We Wish You a Merry Christmass", img: "wwyamc", videoID: ""});
+          this.adventData.push({title: "Joy to the World", img: "joy", videoID: ""});
+          this.adventData.push({title: "Angels We Have Heard On High", img: "angels", videoID: ""});
+          this.adventData.push({title: "Have Yourself a Merry Little Christmas", img: "merryLittleXmas", videoID: ""});
+          this.adventData.push({title: "Here Comes Santa Claus", img: "hcsc", videoID: ""});
+
+          this.unlockAll = false;
+
+          this.year = 2021;
+          this.monthDays = 24;
+          document.title = `Xmas Music Advent ${this.year}`;
+
+          this.loadState();
+          this.loadDay(-1);
+
+          //update calendar every 5 seconds
+          setInterval(() => this.updateCalendar(), 5000);
+
+        }
+
+        unlock() {
+          this.unlockAll = true;
+          this.updateCalendar();
+        }
+
+        lock() {
+          this.unlockAll = false;
+          this.updateCalendar();
+        }
+
+        loadState() {
+          this.state = {};
+          //32 elements so that element 1 through 31 exist
+          this.state.opened = (new Array(this.monthDays + 1)).fill(false);
+
+          const rawSave = localStorage.getItem(`adventState${this.year}`);
+
+          if (rawSave !== null) {
+            const saveObj = JSON.parse(rawSave);
+            this.state = {...this.state, ...saveObj};
+          }
+
+          this.initCalendar();
+        }
+
+        saveState() {
+          const rawSave = JSON.stringify(this.state);
+          localStorage.setItem(`adventState${this.year}`, rawSave);
+        }
+
+        reset() {
+          localStorage.removeItem(`adventState${this.year}`);
+          this.loadState();
+          this.saveState();
+        }
+
+        initCalendar() {
+          const root = document.getElementById('calendar');
+          const divMonth = document.createElement('div');
+          divMonth.id = 'month';
+          divMonth.innerHTML = `December ${this.year}`;
+          root.appendChild(divMonth);
+
+          const days = 'Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday'.split`,`;
+          days.forEach( v => {
+            const dd = document.createElement('div');
+            dd.innerText = v;
+            dd.classList.add('dayDay');
+            root.appendChild(dd);
+          });
+
+          const emptyDays = (new Date(`12/01/${this.year}`)).getDay();
+          for (let i = 0; i < emptyDays; i++) {
+            const ed = document.createElement('div');
+            root.appendChild(ed);
+          }
+
+          this.dayBoxes = [];
+          for (let i = 0; i < this.monthDays; i++) {
+            //day box
+            const pd = document.createElement('div');
+            pd.id = `day${i+1}`;
+            pd.classList.add('adventDay');
+            pd.onclick = () => this.clickDay(i+1);
+            this.dayBoxes[i+1] = pd;
+
+            //date text
+            const dateSpan = document.createElement('span');
+            dateSpan.innerText = `${i+1}`;
+            pd.appendChild(dateSpan);
+
+            root.appendChild(pd);
+          }
+
+          this.updateCalendar();
+        }
+
+        updateCalendar() {
+          const curDay = (new Date()).getDay();
+          const curDate = new Date();
+          for (let i = 1; i <= this.monthDays; i++) {
+            const openDate = new Date(`12/${i}/${this.year}`);
+            if (curDate >= openDate || this.unlockAll) {
+              this.dayBoxes[i].classList.remove('dayFuture');
+              if (this.state.opened[i] || this.unlockAll) {
+                //display background image
+                this.dayBoxes[i].style.backgroundImage = `url("./${this.adventData[i].img}.png")`;
+              } else {
+                //display solid background
+                this.dayBoxes[i].style.backgroundImage = 'none';
+              }
+            } else {
+              //days that are locked 
+              this.dayBoxes[i].style.backgroundImage = 'none';
+              this.dayBoxes[i].classList.add('dayFuture');
+            }
+          }
+        }
+
+        openDay(n) {
+          //if n <= curDay then set it open, otherwise, do not
+          const openDate = new Date(`12/${n}/${this.year}`);
+          const curDate = new Date();
+
+          if (curDate >= openDate) {
+            this.state.opened[n] = true;
+            this.saveState();
+            this.updateCalendar();
+            return true;
+          }
+
+          return false;
+        }
+
+        clickDay(n) {
+          if (this.openDay(n) || this.unlockAll) {
+            this.loadDay(n);
+          }
+        }
+
+        loadDay(n) {
+          console.log('Loading day', n);
+
+          if (n === -1) {
+            //get from query string
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const queryDay = urlParams.get('day');
+            if (queryDay === null) {
+              n = 0;
+            } else {
+              n = parseInt(queryDay);
+            }
+          }
+
+          if (n <= 0) {return;}
+
+          if (!this.state.opened[n] && !this.unlockAll) {return;}
+
+          const adventData = this.adventData[n];
+
+          const oldSelected = document.getElementsByClassName('adventDaySelected');
+          if (oldSelected.length > 0) {
+            oldSelected.item(0).classList.remove('adventDaySelected');
+          }
+
+          document.getElementById(`day${n}`).classList.add('adventDaySelected');
+
+          //display title
+          document.getElementById('videoTitle').innerText = adventData.title;
+
+          //change video
+          document.getElementById('videoFrame').src = `https://www.youtube.com/embed/${adventData.videoID}?&autoplay=1`;
+
+          //update url
+          window.history.replaceState({}, '', `${location.pathname}?day=${n}`);
+        }
+
+      }
+
+      const app = new App();
+
+    </script>
+  </body>
+</html>
