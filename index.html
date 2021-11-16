@@ -1,9 +1,6 @@
 <html>
   <!--
 TODO:
-  fix test dates to be 12/1/2021
-  fix default to be all closed, instead of all open
-  figure out what to do for the 25th through 31st
   -->
   <head>
     <title>Xmas Music Advent</title>
@@ -101,9 +98,15 @@ TODO:
       #videoFrame {
         box-shadow: 2px 2px 5px var(--hld);
       }
+      #content {
+        display: grid;
+        justify-items: center;
+      }
       #wrapper {
         margin-top: 1em;
         background: black;
+        width: 560px;
+        height: 315px;
       }
     </style>
   </head>
@@ -126,7 +129,7 @@ TODO:
 
           this.adventData = [];
           this.adventData.push({}); //0th spot is empty
-          this.adventData.push({title: "It's Beginning to Look a Lot Like Christmas", img: "ibtlallc", videoID: ""});
+          this.adventData.push({title: "It's Beginning to Look a Lot Like Christmas", img: "ibtlallc", videoID: "zr84TCkWsJk"});
           this.adventData.push({title: "Rudolph the Red Nosed Reindeer", img: "rudolph", videoID: "VjL031bE9FA"});
           this.adventData.push({title: "O' Little Town of Bethlehem", img: "bethlehem", videoID: ""});
           this.adventData.push({title: "Christmas Time is Here", img: "christmasTimeIsHere", videoID: ""});
