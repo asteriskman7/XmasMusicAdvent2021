@@ -320,7 +320,11 @@ TODO:
           document.getElementById('videoTitle').innerText = adventData.title;
 
           //change video
-          document.getElementById('videoFrame').src = `https://www.youtube.com/embed/${adventData.videoID}?&autoplay=1`;
+          if (adventData.videoID.length > 0) {
+            document.getElementById('videoFrame').src = `https://www.youtube.com/embed/${adventData.videoID}?&autoplay=1`;
+          } else {
+            document.getElementById('videoFrame').src = '';
+          }
 
           //update url
           window.history.replaceState({}, '', `${location.pathname}?day=${n}`);
